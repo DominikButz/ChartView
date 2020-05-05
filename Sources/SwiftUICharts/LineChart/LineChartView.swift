@@ -106,7 +106,7 @@ public struct LineChartView: View {
                 .frame(width: frame.width, height: frame.height + 30)
                 .clipShape(RoundedRectangle(cornerRadius: 20))
                 .offset(x: 0, y: 0)
-            }.frame(width: self.formSize.width, height: self.formSize.height)
+            }.frame(width: self.frame.width, height: self.frame.height)
         }
         .gesture(DragGesture()
         .onChanged({ value in
@@ -117,7 +117,7 @@ public struct LineChartView: View {
             .onEnded({ value in
                 self.showIndicatorDot = false
             })
-        )
+        ).animation(.default)
     }
     
     @discardableResult func getClosestDataPoint(toPoint: CGPoint, width:CGFloat, height: CGFloat) -> CGPoint {
