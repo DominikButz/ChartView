@@ -30,10 +30,12 @@ public struct LineChartView: View {
             
         }
     }
-    let frame = CGSize(width: 180, height: 120)
+    @State private var currentLabel: String = ""
+    
+    var frame = CGSize.zero
     private var rateValue: Int
     
-    public init(data: [Double],
+    public init(data: ChartData,
                 title: String,
                 legend: String? = nil,
                 style: ChartStyle = Styles.lineChartStyleOne,
@@ -42,8 +44,9 @@ public struct LineChartView: View {
                 dropShadow: Bool? = true,
                 valueSpecifier: String? = "%.1f") {
         
-        self.data = ChartData(points: data)
+        self.data = data
         self.title = title
+        self.frame = CGSize(width: form!.width, height: 120)
         self.legend = legend
         self.style = style
         self.darkModeStyle = style.darkModeStyle != nil ? style.darkModeStyle! : Styles.lineViewDarkMode
@@ -86,9 +89,13 @@ public struct LineChartView: View {
                 }else{
                     HStack{
                         Spacer()
-                        Text("\(self.currentValue, specifier: self.valueSpecifier)")
-                            .font(.system(size: 41, weight: .bold, design: .default))
-                            .offset(x: 0, y: 30)
+                        VStack {
+                            Text("\(self.currentValue, specifier: self.valueSpecifier)")
+                                .font(.system(size: 41, weight: .bold, design: .default))
+                            Text(self.currentLabel)
+                                .font(.system(size: 32, weight: .regular, design: .default))
+                                .foregroundColor(.gray)
+                        }.offset(x: 0, y: 30).animation(.spring(response: 0.0, dampingFraction:0.2))
                         Spacer()
                     }
                     .transition(.scale)
@@ -128,6 +135,7 @@ public struct LineChartView: View {
         let index:Int = Int(round((toPoint.x)/stepWidth))
         if (index >= 0 && index < points.count){
             self.currentValue = points[index]
+            self.currentLabel = self.data.points[index].0
             return CGPoint(x: CGFloat(index)*stepWidth, y: CGFloat(points[index])*stepHeight)
         }
         return .zero
@@ -137,7 +145,8 @@ public struct LineChartView: View {
 struct WidgetView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
-            LineChartView(data: [8,23,54,32,12,37,7,23,43], title: "Line chart", legend: "Basic")
+    
+            return LineChartView(data: ChartData(values: [("8/1", 8), ("15/1", 23), ("22/1", 54), ("29/1", 32), ("5/2", 12),  ("12/2", 37), ("19/2", 7), ("26/2", 23) ]), title: "Line chart", legend: "Basic")
                 .environment(\.colorScheme, .light)
         }
     }
